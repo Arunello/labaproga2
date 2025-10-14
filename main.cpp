@@ -249,7 +249,7 @@ int main() {
 
                 min = TempArr[0];
                 max = TempArr[99];
-                avg = round((max + min) / 2);
+                avg = round((max + min) / 2.0);
 
                 std::cout << "Отсортированный массив" << "\n\n"
                 << "Среднее значение максимального и минимального элементов: " << avg << "\n"
