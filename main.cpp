@@ -3,7 +3,7 @@
 #include <iostream>
 #include <clocale>
 #include <cstdlib>
-#include <ctime> 
+#include <ctime>
 #include <utility>
 
 using namespace std;
@@ -32,13 +32,13 @@ void quickSort(int arr[], int left, int right) {
 int TempArr [100];
 
 int main() {
-    
+
     setlocale(0, "");
 
     bool escape = false;
-    int arr [100];
+    int arr [100] = {0};
     srand(time(NULL));
-    for (int i = 0; i<100; i++) {arr[i] = rand() % 199 - 99;}
+    for (int i = 0; i < 100; i++) {arr[i] = rand() % 199 - 99;}
 
 
 
@@ -52,7 +52,55 @@ int main() {
             if (i % 33 == 0 && i != 0) {std::cout << "\n";}
         }
 
-        std::cout << "\n"
+
+
+        std::cout << "\n" << "ИДЗ №17 для текущего массива: ";
+
+        //ИДЗ №17
+
+
+        auto start = steady_clock::now();
+
+
+        int countArr [199] = {0};
+
+        for (int i = 0; i < 100; i++) {
+            countArr[arr[i] + 99]++;
+        }
+
+        int resultArr [100] = {0};
+        int quantityOfMods = 0;
+        int max = 0;
+
+        for (int i = 0; i < 199; i++) {
+            if (countArr[i] > max) {
+                quantityOfMods = 0;
+                resultArr[quantityOfMods] = (i - 99);
+                quantityOfMods++;
+
+                max = countArr[i];
+            }
+
+            else if (countArr[i] == max) {
+                resultArr[quantityOfMods] = (i - 99);
+                quantityOfMods++;
+            }
+        }
+
+
+        auto end = steady_clock::now();
+        auto result = duration_cast<nanoseconds>(end-start);
+
+
+        for (int i = 0; i < quantityOfMods; i++) {
+            std::cout << resultArr[i] << " ";
+        }
+
+        std::cout << "\n" << "Время затраченное на нахождение мода: " << result.count() << " " << "наносекунд" << "\n\n";
+
+
+
+        std::cout << "\n\n"
         << "1. Сгенерировать новый массив из ста целых чисел" << "\n"
         << "2. Отсортировать массив" << "\n"
         << "3. Найти максимальный и минимальный элемент массива" << "\n"
@@ -62,12 +110,12 @@ int main() {
         << "7. Проверка наличия произвольного элемента в массиве" << "\n"
         << "8. Поменять местами произвольные элементы массива" << "\n"
         << "9. Готово!" << "\n";
-        
+
         int choice;
         std::cin >> choice;
         std::cin.ignore();
         std::cout << "\n\n\n\n\n\n\n";
-        
+
         switch (choice) {
             case 1:
                 for (int i = 0; i<100; i++) {arr[i] = rand() % 199 - 99;}
@@ -79,7 +127,7 @@ int main() {
 
 
             case 2: {
-                auto start = steady_clock::now();
+                auto start0 = steady_clock::now();
 
 
                 bool sorted = false;
@@ -94,12 +142,124 @@ int main() {
                 }
 
 
-                auto end = steady_clock::now();
-                auto result = duration_cast<nanoseconds>(end-start);
-                
+                auto end0 = steady_clock::now();
+                auto result0 = duration_cast<nanoseconds>(end0-start0);
 
-                std::cout << "Время затраченное на сортировку: " << result.count() << " " << "наносекунд" << "\n\n" 
-                << "Отсортированный массив: " << "\n";
+
+                std::cout << "Время затраченное на сортировку пузырьком: " << result.count() << " " << "наносекунд" << "\n";
+                for (int i = 0; i < 100; i++) {TempArr[i] = arr[i];}
+
+                
+                auto start1 = steady_clock::now();
+
+
+                sorted = false;
+                int start = 0;
+                int end = 99;
+
+                while (!sorted) {
+                    sorted = true;
+
+                    for (int i = start; i < end; i++) {
+                        if (TempArr[i] > TempArr[i + 1]) {
+                        std::swap(TempArr[i], TempArr[i + 1]);
+                        sorted = false;
+                        }
+                    }
+
+                    if (sorted) {
+                        break;
+                    }
+
+                    end--;
+
+                    for (int i = end; i >= start; i--) {
+                        if (TempArr[i] > TempArr[i + 1]) {
+                            std::swap(TempArr[i], TempArr[i + 1]);
+                            sorted = false;
+                        }
+                    }
+
+                    start++;
+                }
+
+
+                auto end1 = steady_clock::now();
+                auto result1 = duration_cast<nanoseconds>(end1-start1);
+                
+                
+                std::cout << "Время затраченное на шейкерную сортировку: " << result1.count() << " " << "наносекунд" << "\n";
+                for (int i = 0; i < 100; i++) {TempArr[i] = arr[i];}
+
+
+                auto start2 = steady_clock::now();
+
+
+                int gap = 100;
+                bool swapped = true;
+
+                while (gap > 1 || swapped) {
+                    gap = int(gap / 1.247);
+
+                    if (gap < 1) {gap = 1;}
+                    swapped = false;
+
+                    for (int i = 0; i + gap < 100; i++) {
+                        if (TempArr[i] > TempArr[i + gap]) {
+                            swap(TempArr[i], TempArr[i + gap]);
+                            swapped = true;
+                        }
+                    }
+                }
+
+
+                auto end2 = steady_clock::now();
+                auto result2 = duration_cast<nanoseconds>(end2-start2);
+
+
+                std::cout << "Время затраченное на сортировку рассчёсткой: " << result2.count() << " " << "наносекунд" << "\n";
+                for (int i = 0; i < 100; i++) {TempArr[i] = arr[i];}
+
+
+                auto start3 = steady_clock::now();
+
+
+                for (int i = 1; i < 100; i++) {
+                    int key = TempArr[i];
+                    int j = i - 1;
+
+                    while (j >= 0 && TempArr[j] > key) {
+                        TempArr[j + 1] = TempArr[j];
+                        j--;
+                    }
+
+                    TempArr[j + 1] = key;
+                }
+
+
+                auto end3 = steady_clock::now();
+                auto result3 = duration_cast<nanoseconds>(end3-start3);
+
+
+                std::cout << "Время затраченное на сортировку вставками: " << result3.count() << " " << "наносекунд" << "\n";
+                for (int i = 0; i < 100; i++) {TempArr[i] = arr[i];}
+
+
+                auto start4 = steady_clock::now();
+
+
+                quickSort(TempArr, 0, 99);
+
+
+                auto end4 = steady_clock::now();
+                auto result4 = duration_cast<nanoseconds>(end4-start4);
+
+
+                std::cout << "Время затраченное на сортировку quicksort: " << result4.count() << " " << "наносекунд" << "\n";
+
+
+                std::cout << "\n\n" << "Отсортированный массив: " << "\n";
+
 
                 for (int i = 0; i < 100; i++) {
                     std::cout << TempArr[i] << " ";
@@ -123,7 +283,7 @@ int main() {
                 int max = -100;
                 int min = 100;
 
-                
+
                 auto start1 = steady_clock::now();
 
 
@@ -149,7 +309,7 @@ int main() {
 
                 auto end2 = steady_clock::now();
                 auto sortedResult = duration_cast<nanoseconds>(end2 - start2);
-                
+
 
                 std::cout << "Максимальный элемент: " << max << "\n"
                 << "Минимальный элемент: " << min << "\n\n"
@@ -161,7 +321,7 @@ int main() {
                 std::cin.get();
                 std::cout << "\n\n\n\n\n\n\n";
             break;
-            } 
+            }
 
 
 
@@ -195,7 +355,7 @@ int main() {
                         k++;
                     }
                 }
-                
+
                 if (found == false) {std::cout << "индексы не найдены";}
 
                 std::cout << "\nКоличество элементов равных среднему значению: " << k << "\n";
@@ -213,26 +373,26 @@ int main() {
                 min = 100;
                 k = 0;
 
-                bool sorted = false;     
+                bool sorted = false;
                 int start = 0;
                 int end = 99;
 
                 while (!sorted) {
                     sorted = true;
-                
+
                     for (int i = start; i < end; i++) {
                         if (TempArr[i] > TempArr[i + 1]) {
                         std::swap(TempArr[i], TempArr[i + 1]);
                         sorted = false;
                         }
                     }
-                
+
                     if (sorted) {
                         break;
                     }
 
                     end--;
-                
+
                     for (int i = end; i >= start; i--) {
                         if (TempArr[i] > TempArr[i + 1]) {
                             std::swap(TempArr[i], TempArr[i + 1]);
@@ -262,19 +422,19 @@ int main() {
 
                 while (left <= right) {
                     mid = left + (right - left) / 2;
-                
+
                     if (TempArr[mid] == avg) {
                         found = true;
                         std::cout << mid << " ";
                         k++;
-                    
+
                         int i = mid - 1;
                         while (i >= 0 && TempArr[i] == avg) {
                             std::cout << i << " ";
                             k++;
                             i--;
                         }
-                        
+
                         i = mid + 1;
                         while (i < 100 && TempArr[i] == avg) {
                             std::cout << i << " ";
@@ -342,7 +502,7 @@ int main() {
 
                 int left = 0;
                 int right = 100;
-                
+
                 while (left < right) {
                     int mid = left + (right - left) / 2;
 
@@ -355,7 +515,7 @@ int main() {
                 }
 
                 int k = left;
-                
+
                 std::cout << "Количество элементов меньше заданного числа: " << k << "\n";
 
 
@@ -398,7 +558,7 @@ int main() {
 
                 int left = 0;
                 int right = 100;
-                
+
                 while (left < right) {
                     int mid = left + (right - left) / 2;
 
@@ -410,9 +570,16 @@ int main() {
                     }
                 }
 
-                int k = 100 - left;
+                int k;
+                if (left == 0) {
+                    k = 99 - left;
+                }
+                else {
+                    k = 100 - left;
+                }
                 
-                std::cout << "Количество элементов больше заданного числа: " << k << "\n";
+
+                std::cout << "Количество элементов больше заданного числа: " << k << "\n" << left;
 
 
 
@@ -434,8 +601,8 @@ int main() {
 
 
                 for (int i = 1; i < 100; i++) {
-                    int key = TempArr[i];      
-                    int j = i - 1;            
+                    int key = TempArr[i];
+                    int j = i - 1;
 
                     while (j >= 0 && TempArr[j] > key) {
                         TempArr[j + 1] = TempArr[j];
@@ -491,7 +658,7 @@ int main() {
                 auto end2 = steady_clock::now();
                 auto notBinaryResult = duration_cast<nanoseconds>(end2 - start2);
 
-                
+
                 std::cout << "Время затраченное на поиск перебором: " << notBinaryResult.count() << "\n";
                 cout << (found ? "Элемент найден\n" : "Элемент не найден\n");
 
@@ -514,7 +681,7 @@ int main() {
 
                 std::cout << "Введите индекс второго элемента" << "\n";
                 std::cin >> secondNumber;
-                
+
                 std::cin.ignore();
 
 
@@ -529,8 +696,16 @@ int main() {
                     auto end = steady_clock::now();
                     auto result = duration_cast<nanoseconds>(end - start);
 
-                    
+
                     std::cout << "Время затраченное на обмен: " << result.count() << "\n";
+
+                    std::cout << "Массив после обмена: " << "\n";
+
+                    for (int i = 0; i < 100; i++) {
+                    std::cout << TempArr[i] << " ";
+                    if (i % 33 == 0 && i != 0) {std::cout << "\n";}
+        }
+
                 }
                 else {
                     std::cout << "Индексы выходят за пределы массива!";
@@ -548,4 +723,3 @@ int main() {
         }
     }
 }
-
