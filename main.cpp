@@ -21,20 +21,20 @@ int TempArr [N];
 void quickSort(int arr[], int left, int right) {
     int i = left;
     int j = right;
-    int opora = arr[(left + right) / 2];
+    int opora = arr[left + (right - left) / 2];
 
     while (i <= j) {
-        while (arr[i] < opora) ++i;
-        while (arr[j] > opora) --j;
+        while (arr[i] < opora) i++;
+        while (arr[j] > opora) j--;
 
         if (i <= j) {
             swap(arr[i], arr[j]);
-            ++i;
-            --j;
+            i++;
+            j--;
         }
     }
 
-    if (left < j)  quickSort(arr, left, j);
+    if (left < j) quickSort(arr, left, j);
     if (i < right) quickSort(arr, i, right);
 }
 
@@ -42,7 +42,7 @@ void bubbleSort(int arr[]) {
     bool sorted = false;
     while (!sorted) {
         sorted = true;
-        for (int i = 0; i < 99; i++) {
+        for (int i = 0; i < (N-1); i++) {
             if (arr[i] > arr[i + 1]) {
                 swap(arr[i], arr[i + 1]);
                 sorted = false;
@@ -58,7 +58,7 @@ void shakerSort(int arr[], int start, int end) {
         sorted = true;
         for (int i = start; i < end; i++) {
             if (arr[i] > arr[i + 1]) {
-                std::swap(arr[i], arr[i + 1]);
+                swap(arr[i], arr[i + 1]);
                 sorted = false;
             }
         }
@@ -71,7 +71,7 @@ void shakerSort(int arr[], int start, int end) {
 
         for (int i = end; i >= start; i--) {
             if (arr[i] > arr[i + 1]) {
-                std::swap(arr[i], arr[i + 1]);
+                swap(arr[i], arr[i + 1]);
                 sorted = false;
             }
         }
@@ -88,8 +88,8 @@ void combSort(int arr[]) {
         gap = int(gap / 1.247);
 
         if (gap < 1) {gap = 1;}
-        swapped = false;
 
+        swapped = false;
         for (int i = 0; i + gap < N; i++) {
             if (arr[i] > arr[i + gap]) {
                 swap(arr[i], arr[i + gap]);
@@ -100,17 +100,22 @@ void combSort(int arr[]) {
 }
 
 void insertionSort(int arr[]) {
-    for (int i = 1; i < 100; i++) {
-    int key = arr[i];
-    int j = i - 1;
-
-    while (j >= 0 && arr[j] > key) {
-        arr[j + 1] = arr[j];
-        j--;
+    for (int i = 1; i < N; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
     }
-
-    arr[j + 1] = key;
 }
+
+void arrInStdOut(int arr[]) {
+    for (int i = 0; i < N; i++) {
+        std::cout << arr[i] << " ";
+        if (i % 33 == 0 && i != 0) {std::cout << "\n";}
+    }
 }
 
 int main() {
@@ -129,10 +134,7 @@ int main() {
         for (int i = 0; i < N; i++) {TempArr[i] = arr[i];}
 
         std::cout << "Текущий массив: " << "\n";
-        for (int i = 0; i < N; i++) {
-            std::cout << arr[i] << " ";
-            if (i % 33 == 0 && i != 0) {std::cout << "\n";}
-        }
+        arrInStdOut(arr);
 
 
 
@@ -285,12 +287,7 @@ int main() {
                 std::cout << "\n\n" << "Отсортированный массив: " << "\n";
 
 
-                for (int i = 0; i < N; i++) {
-                    std::cout << TempArr[i] << " ";
-                    if (i % 33 == 0 && i != 0) {
-                    std::cout << "\n";
-                    }
-                }
+                arrInStdOut(TempArr);
 
 
 
@@ -632,11 +629,7 @@ int main() {
 
                     std::cout << "Массив после обмена: " << "\n";
 
-                    for (int i = 0; i < N; i++) {
-                    std::cout << TempArr[i] << " ";
-                    if (i % 33 == 0 && i != 0) {std::cout << "\n";}
-        }
-
+                    arrInStdOut(TempArr);
                 }
                 else {
                     std::cout << "Индексы выходят за пределы массива";
