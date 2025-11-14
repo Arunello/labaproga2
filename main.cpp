@@ -1,5 +1,6 @@
 #include <chrono>
 #include <cmath>
+#include <cstdio>
 #include <iostream>
 #include <clocale>
 #include <cstdlib>
@@ -8,6 +9,14 @@
 
 using namespace std;
 using namespace chrono;
+
+
+
+const int N = 100;
+const int mini = -99;
+const int maxi = 99;
+
+int TempArr [N];
 
 void quickSort(int arr[], int left, int right) {
     int i = left;
@@ -29,25 +38,98 @@ void quickSort(int arr[], int left, int right) {
     if (i < right) quickSort(arr, i, right);
 }
 
-int TempArr [100];
+void bubbleSort(int arr[]) {
+    bool sorted = false;
+    while (!sorted) {
+        sorted = true;
+        for (int i = 0; i < 99; i++) {
+            if (arr[i] > arr[i + 1]) {
+                swap(arr[i], arr[i + 1]);
+                sorted = false;
+            }
+        }
+    }
+}
+
+void shakerSort(int arr[], int start, int end) {
+    bool sorted = false;
+
+    while (!sorted) {
+        sorted = true;
+        for (int i = start; i < end; i++) {
+            if (arr[i] > arr[i + 1]) {
+                std::swap(arr[i], arr[i + 1]);
+                sorted = false;
+            }
+        }
+
+        if (sorted) {
+            break;
+        }
+
+        end--;
+
+        for (int i = end; i >= start; i--) {
+            if (arr[i] > arr[i + 1]) {
+                std::swap(arr[i], arr[i + 1]);
+                sorted = false;
+            }
+        }
+
+        start++;
+    }
+}
+
+void combSort(int arr[]) {
+    int gap = N;
+    bool swapped = true;
+
+    while (gap > 1 || swapped) {
+        gap = int(gap / 1.247);
+
+        if (gap < 1) {gap = 1;}
+        swapped = false;
+
+        for (int i = 0; i + gap < N; i++) {
+            if (arr[i] > arr[i + gap]) {
+                swap(arr[i], arr[i + gap]);
+                swapped = true;
+            }
+        }
+    }
+}
+
+void insertionSort(int arr[]) {
+    for (int i = 1; i < 100; i++) {
+    int key = arr[i];
+    int j = i - 1;
+
+    while (j >= 0 && arr[j] > key) {
+        arr[j + 1] = arr[j];
+        j--;
+    }
+
+    arr[j + 1] = key;
+}
+}
 
 int main() {
 
     setlocale(0, "");
 
     bool escape = false;
-    int arr [100] = {0};
+    int arr [N] = {0};
     srand(time(NULL));
-    for (int i = 0; i < 100; i++) {arr[i] = rand() % 199 - 99;}
+    for (int i = 0; i < N; i++) {arr[i] = rand() % (maxi - mini + 1) + mini;}
 
 
 
     while (!escape) {
 
-        for (int i = 0; i < 100; i++) {TempArr[i] = arr[i];}
+        for (int i = 0; i < N; i++) {TempArr[i] = arr[i];}
 
         std::cout << "Текущий массив: " << "\n";
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < N; i++) {
             std::cout << arr[i] << " ";
             if (i % 33 == 0 && i != 0) {std::cout << "\n";}
         }
@@ -56,33 +138,37 @@ int main() {
 
         std::cout << "\n" << "ИДЗ №17 для текущего массива: ";
 
-        //ИДЗ №17
+        //ИДЗ №17 (Найти моду массива, если таких значений несколько, то вывести все. Подсчитать время поиска)
+
+
+        quickSort(TempArr, 0, int (N-1));
 
 
         auto start = steady_clock::now();
 
+        const int countArrSize = maxi + (mini < 0 ? -mini : mini) + 1;
 
-        int countArr [199] = {0};
+        int countArr [countArrSize] = {0};
 
-        for (int i = 0; i < 100; i++) {
-            countArr[arr[i] + 99]++;
+        for (int i = 0; i < N; i++) {
+            countArr[arr[i] + abs(mini)]++;
         }
 
-        int resultArr [100] = {0};
+        int resultArr [N] = {0};
         int quantityOfMods = 0;
         int max = 0;
 
-        for (int i = 0; i < 199; i++) {
+        for (int i = 0; i < countArrSize; i++) {
             if (countArr[i] > max) {
                 quantityOfMods = 0;
-                resultArr[quantityOfMods] = (i - 99);
+                resultArr[quantityOfMods] = (i - maxi);
                 quantityOfMods++;
 
                 max = countArr[i];
             }
 
             else if (countArr[i] == max) {
-                resultArr[quantityOfMods] = (i - 99);
+                resultArr[quantityOfMods] = (i - maxi);
                 quantityOfMods++;
             }
         }
@@ -118,7 +204,7 @@ int main() {
 
         switch (choice) {
             case 1:
-                for (int i = 0; i<100; i++) {arr[i] = rand() % 199 - 99;}
+                for (int i = 0; i   <  N; i++) {arr[i] = rand() % (maxi - mini + 1) + mini;}
             break;
 
 
@@ -130,16 +216,7 @@ int main() {
                 auto start0 = steady_clock::now();
 
 
-                bool sorted = false;
-                while (!sorted) {
-                    sorted = true;
-                    for (int i = 0; i < 99; i++) {
-                        if (TempArr[i] > TempArr[i + 1]) {
-                            swap(TempArr[i], TempArr[i + 1]);
-                            sorted = false;
-                        }
-                    }
-                }
+                bubbleSort(TempArr);
 
 
                 auto end0 = steady_clock::now();
@@ -147,41 +224,13 @@ int main() {
 
 
                 std::cout << "Время затраченное на сортировку пузырьком: " << result.count() << " " << "наносекунд" << "\n";
-                for (int i = 0; i < 100; i++) {TempArr[i] = arr[i];}
+                for (int i = 0; i < N; i++) {TempArr[i] = arr[i];}
 
                 
                 auto start1 = steady_clock::now();
 
 
-                sorted = false;
-                int start = 0;
-                int end = 99;
-
-                while (!sorted) {
-                    sorted = true;
-
-                    for (int i = start; i < end; i++) {
-                        if (TempArr[i] > TempArr[i + 1]) {
-                        std::swap(TempArr[i], TempArr[i + 1]);
-                        sorted = false;
-                        }
-                    }
-
-                    if (sorted) {
-                        break;
-                    }
-
-                    end--;
-
-                    for (int i = end; i >= start; i--) {
-                        if (TempArr[i] > TempArr[i + 1]) {
-                            std::swap(TempArr[i], TempArr[i + 1]);
-                            sorted = false;
-                        }
-                    }
-
-                    start++;
-                }
+                shakerSort(TempArr, 0, int (N-1));
 
 
                 auto end1 = steady_clock::now();
@@ -189,28 +238,13 @@ int main() {
                 
                 
                 std::cout << "Время затраченное на шейкерную сортировку: " << result1.count() << " " << "наносекунд" << "\n";
-                for (int i = 0; i < 100; i++) {TempArr[i] = arr[i];}
+                for (int i = 0; i < N; i++) {TempArr[i] = arr[i];}
 
 
                 auto start2 = steady_clock::now();
 
 
-                int gap = 100;
-                bool swapped = true;
-
-                while (gap > 1 || swapped) {
-                    gap = int(gap / 1.247);
-
-                    if (gap < 1) {gap = 1;}
-                    swapped = false;
-
-                    for (int i = 0; i + gap < 100; i++) {
-                        if (TempArr[i] > TempArr[i + gap]) {
-                            swap(TempArr[i], TempArr[i + gap]);
-                            swapped = true;
-                        }
-                    }
-                }
+                combSort(TempArr);
 
 
                 auto end2 = steady_clock::now();
@@ -218,23 +252,13 @@ int main() {
 
 
                 std::cout << "Время затраченное на сортировку рассчёсткой: " << result2.count() << " " << "наносекунд" << "\n";
-                for (int i = 0; i < 100; i++) {TempArr[i] = arr[i];}
+                for (int i = 0; i < N; i++) {TempArr[i] = arr[i];}
 
 
                 auto start3 = steady_clock::now();
 
 
-                for (int i = 1; i < 100; i++) {
-                    int key = TempArr[i];
-                    int j = i - 1;
-
-                    while (j >= 0 && TempArr[j] > key) {
-                        TempArr[j + 1] = TempArr[j];
-                        j--;
-                    }
-
-                    TempArr[j + 1] = key;
-                }
+                insertionSort(TempArr);
 
 
                 auto end3 = steady_clock::now();
@@ -242,13 +266,13 @@ int main() {
 
 
                 std::cout << "Время затраченное на сортировку вставками: " << result3.count() << " " << "наносекунд" << "\n";
-                for (int i = 0; i < 100; i++) {TempArr[i] = arr[i];}
+                for (int i = 0; i < N; i++) {TempArr[i] = arr[i];}
 
 
                 auto start4 = steady_clock::now();
 
 
-                quickSort(TempArr, 0, 99);
+                quickSort(TempArr, 0, int (N-1));
 
 
                 auto end4 = steady_clock::now();
@@ -261,7 +285,7 @@ int main() {
                 std::cout << "\n\n" << "Отсортированный массив: " << "\n";
 
 
-                for (int i = 0; i < 100; i++) {
+                for (int i = 0; i < N; i++) {
                     std::cout << TempArr[i] << " ";
                     if (i % 33 == 0 && i != 0) {
                     std::cout << "\n";
@@ -280,14 +304,16 @@ int main() {
 
 
             case 3: {
-                int max = -100;
-                int min = 100;
+
+                quickSort(TempArr, 0, int (N-1));
+                int max = mini;
+                int min = maxi;
 
 
                 auto start1 = steady_clock::now();
 
 
-                for (int i = 0; i < 100; i++) {
+                for (int i = 0; i < N; i++) {
                     if (arr[i] < min) {min = arr[i];}
                     if (arr[i] > max) {max = arr[i];}
                 }
@@ -297,14 +323,11 @@ int main() {
                 auto unsortedResult = duration_cast<nanoseconds>(end1 - start1);
 
 
-                quickSort(TempArr, 0, 99);
-
-
                 auto start2 = steady_clock::now();
 
 
                 min = TempArr[0];
-                max = TempArr[99];
+                max = TempArr[N-1];
 
 
                 auto end2 = steady_clock::now();
@@ -328,15 +351,17 @@ int main() {
 
 
             case 4: {
-                int max = -100;
-                int min = 100;
+
+                quickSort(TempArr, 0, int (N-1));
+                int max = mini;
+                int min = maxi;
                 int avg;
                 int k = 0;
 
 
                 auto start1 = steady_clock::now();
 
-                for (int i = 0; i < 100; i++) {
+                for (int i = 0; i < N; i++) {
                     if (arr[i] < min) {min = arr[i];}
                     if (arr[i] > max) {max = arr[i];}
                 }
@@ -348,7 +373,7 @@ int main() {
                 << "Индексы элементов равные среднему значению: ";
 
                 bool found = false;
-                for (int i = 0; i < 100; i++) {
+                for (int i = 0; i < N; i++) {
                     if (arr[i] == avg) {
                         found = true;
                         std::cout << i << " ";
@@ -369,46 +394,16 @@ int main() {
 
 
 
-                max = -100;
-                min = 100;
                 k = 0;
 
-                bool sorted = false;
-                int start = 0;
-                int end = 99;
-
-                while (!sorted) {
-                    sorted = true;
-
-                    for (int i = start; i < end; i++) {
-                        if (TempArr[i] > TempArr[i + 1]) {
-                        std::swap(TempArr[i], TempArr[i + 1]);
-                        sorted = false;
-                        }
-                    }
-
-                    if (sorted) {
-                        break;
-                    }
-
-                    end--;
-
-                    for (int i = end; i >= start; i--) {
-                        if (TempArr[i] > TempArr[i + 1]) {
-                            std::swap(TempArr[i], TempArr[i + 1]);
-                            sorted = false;
-                        }
-                    }
-
-                    start++;
-                }
+                quickSort(TempArr, 0, int (N-1));
 
 
                 auto start2 = steady_clock::now();
 
 
                 min = TempArr[0];
-                max = TempArr[99];
+                max = TempArr[N-1];
                 avg = round((max + min) / 2.0);
 
                 std::cout << "Отсортированный массив" << "\n\n"
@@ -416,7 +411,7 @@ int main() {
                 << "Индексы элементов равные среднему значению: ";
 
                 int left = 0;
-                int right = 99;
+                int right = N-1;
                 int mid;
                 found = false;
 
@@ -436,7 +431,7 @@ int main() {
                         }
 
                         i = mid + 1;
-                        while (i < 100 && TempArr[i] == avg) {
+                        while (i < N && TempArr[i] == avg) {
                             std::cout << i << " ";
                             k++;
                             i++;
@@ -481,40 +476,17 @@ int main() {
 
 
 
-                int gap = 100;
-                bool swapped = true;
+                quickSort(TempArr, 0, int (N-1));
 
-                while (gap > 1 || swapped) {
-                    gap = int(gap / 1.247);
+                int k = 0;
 
-                    if (gap < 1) {gap = 1;}
-                    swapped = false;
-
-                    for (int i = 0; i + gap < 100; i++) {
-                        if (TempArr[i] > TempArr[i + gap]) {
-                            swap(TempArr[i], TempArr[i + gap]);
-                            swapped = true;
-                        }
+                for (int i = 0; i < N; i++) {
+                    if (TempArr[i] >= a) {
+                        break;
                     }
+                    k++;
+                    
                 }
-
-
-
-                int left = 0;
-                int right = 100;
-
-                while (left < right) {
-                    int mid = left + (right - left) / 2;
-
-                    if (TempArr[mid] < a) {
-                        left = mid + 1;
-                    }
-                    else {
-                        right = mid;
-                    }
-                }
-
-                int k = left;
 
                 std::cout << "Количество элементов меньше заданного числа: " << k << "\n";
 
@@ -537,49 +509,19 @@ int main() {
 
 
 
-                int gap = 100;
-                bool swapped = true;
+                quickSort(TempArr, 0, int (N-1));
 
-                while (gap > 1 || swapped) {
-                    gap = int(gap / 1.247);
+                int k = 0;
 
-                    if (gap < 1) {gap = 1;}
-                    swapped = false;
-
-                    for (int i = 0; i + gap < 100; i++) {
-                        if (TempArr[i] > TempArr[i + gap]) {
-                            swap(TempArr[i], TempArr[i + gap]);
-                            swapped = true;
-                        }
+                for (int i = (N-1); i >= 0; i--) {
+                    if (TempArr[i] <= b) {
+                        break;
                     }
-                }
-
-
-
-                int left = 0;
-                int right = 100;
-
-                while (left < right) {
-                    int mid = left + (right - left) / 2;
-
-                    if (TempArr[mid] < b) {
-                        left = mid + 1;
-                    }
-                    else {
-                        right = mid;
-                    }
-                }
-
-                int k;
-                if (left == 0) {
-                    k = 99 - left;
-                }
-                else {
-                    k = 100 - left;
+                    k++;
                 }
                 
 
-                std::cout << "Количество элементов больше заданного числа: " << k << "\n" << left;
+                std::cout << "Количество элементов больше заданного числа: " << k << "\n";
 
 
 
@@ -600,25 +542,14 @@ int main() {
 
 
 
-                for (int i = 1; i < 100; i++) {
-                    int key = TempArr[i];
-                    int j = i - 1;
-
-                    while (j >= 0 && TempArr[j] > key) {
-                        TempArr[j + 1] = TempArr[j];
-                        j--;
-                    }
-
-                    TempArr[j + 1] = key;
-                }
-
+                quickSort(TempArr, 0, int (N-1));
 
 
                 auto start1 = steady_clock::now();
 
 
                 int left = 0;
-                int right = 99;
+                int right = N-1;
                 int mid;
                 bool found = false;
 
@@ -648,7 +579,7 @@ int main() {
                 auto start2 = steady_clock::now();
 
 
-                for (int i = 0; i < 100; i++) {
+                for (int i = 0; i < N; i++) {
                     if (TempArr[i] == number) {
                         break;
                     }
@@ -686,7 +617,7 @@ int main() {
 
 
 
-                if ((0 <= firstNumber && firstNumber <= 99) && (0 <= secondNumber && secondNumber <= 99)) {
+                if ((0 <= firstNumber && firstNumber <= (N-1)) && (0 <= secondNumber && secondNumber <= (N-1))) {
                     auto start = steady_clock::now();
 
 
@@ -701,14 +632,14 @@ int main() {
 
                     std::cout << "Массив после обмена: " << "\n";
 
-                    for (int i = 0; i < 100; i++) {
+                    for (int i = 0; i < N; i++) {
                     std::cout << TempArr[i] << " ";
                     if (i % 33 == 0 && i != 0) {std::cout << "\n";}
         }
 
                 }
                 else {
-                    std::cout << "Индексы выходят за пределы массива!";
+                    std::cout << "Индексы выходят за пределы массива";
                 }
 
 
